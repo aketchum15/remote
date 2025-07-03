@@ -1,5 +1,9 @@
 #include <iostream>
 #include <alsa/asoundlib.h>
+#include "inc/recorder.hxx"
+#include <csignal>
+
+Recorder r;
 
 void list_devices(snd_pcm_stream_t stream_type) {
     int card = -1;
@@ -49,9 +53,24 @@ void list_devices(snd_pcm_stream_t stream_type) {
     }
 }
 
+void intHandler(int dummy) {
+   r.closeSoundCard();
+}
+
+
 int main() {
+
+    signal(SIGINT, intHandler);
+
+
     list_devices(SND_PCM_STREAM_PLAYBACK);
     std::cout << std::endl;
     list_devices(SND_PCM_STREAM_CAPTURE);
+
+    Recorder r; 
+    r.setSoundDevice("hw:Device,0");
+
+    r.init();
+    r.record();
     return 0;
 }
