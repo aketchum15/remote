@@ -6,7 +6,7 @@ CXXFLAGS = -Wall -Wextra -std=c++17
 LIBS = -lasound
 
 # Source and target
-SRC = main.cxx
+SRC = main.cxx recorder.cxx
 TARGET = remote
 
 # Default target
