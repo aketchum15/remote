@@ -1,4 +1,4 @@
-#include <alsa/pcm.h>
+#include <alsa/asoundlib.h>
 
 enum RecorderError {
     None,
@@ -27,7 +27,7 @@ class Recorder {
 
         const char * snd_device;
 
-        unsigned const int srate = 48000;
+        unsigned int srate = 48000;
         unsigned const int nchan = 1;
 
 
