@@ -6,6 +6,10 @@ void Recorder::setSoundDevice(char *str) {
     this->snd_device = str;
 }
 
+Recorder::Recorder() {}
+
+Recorder::~Recorder() {}
+
 RecorderError Recorder::closeSoundCard() {
     if (snd_pcm_close(capture_handle) != 0) 
         return Error;
