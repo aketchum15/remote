@@ -109,7 +109,7 @@ RecorderError Recorder::record() {
         }
 
         for (size_t i = 0; i < 1024; i++) {
-            std::cout << buf[i];
+            std::cout << static_cast<int>(buf[i]);
         }
         std::cout << std::endl;
 
