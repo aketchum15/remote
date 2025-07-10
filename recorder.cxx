@@ -91,7 +91,7 @@ RecorderError Recorder::init(){
 RecorderError Recorder::record() {
 
     int ret = 0;
-    char buf[1024 * 4];
+    uint8_t buf[1024 * 4];
     do {
 
         if ( (ret = snd_pcm_readi(capture_handle, buf, 1024)) != 1024) {
