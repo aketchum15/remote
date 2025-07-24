@@ -38,6 +38,7 @@ void sender(std::vector<uint8_t> &buf) {
 
 int main(void) {
     std::vector<uint8_t> buf;
+    buf.reserve(48000/5 * sizeof(int16_t));
 
     std::thread record_thread(recorder, std::ref(buf));
     std::thread send_thread(sender, std::ref(buf));
