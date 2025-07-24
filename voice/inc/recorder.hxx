@@ -1,4 +1,6 @@
 #include <alsa/asoundlib.h>
+#include <cstddef>
+#include <vector>
 
 enum RecorderError {
     None,
@@ -13,11 +15,13 @@ class Recorder {
         ~Recorder();
 
         RecorderError init(void);
-        RecorderError record(void);
+        void record(std::vector<int16_t> &);
 
         void setSoundDevice(char *);
 
         RecorderError closeSoundCard();
+
+        static const size_t BUF_SIZE = 1024;
 
 
     private:
@@ -29,6 +33,8 @@ class Recorder {
 
         unsigned int srate = 48000;
         unsigned const int nchan = 1;
+
+        unsigned char buffer[BUF_SIZE];
 
 
 };

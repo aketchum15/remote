@@ -1,29 +1,13 @@
-# Compiler and flags
-CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++23 -g 
+all: voice pointer
 
-# ALSA library
-LIBS = -lasound
+.PHONY: voice pointer
+voice:
+	$(MAKE) -C voice
 
-TARGET = remote
+pointer:
+	$(MAKE) -C pointer
 
-# Source and target
-SRCS = main.cxx recorder.cxx
-
-OBJS := $(SRCS:.cxx=.o)
-
-
-# Default target
-all: $(TARGET)
-
-$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
-
-%.o: %.cxx
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-# Clean up build artifacts
 clean:
-	rm -f $(OBJS) $(TARGET)
+	$(MAKE) -C voice  clean
+	$(MAKE) -C pointer clean 
 
-.PHONY: all  clean rebuild

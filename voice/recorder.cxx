@@ -1,6 +1,7 @@
 #include "inc/recorder.hxx"
 #include <alsa/asoundlib.h>
 #include <iostream>
+#include <vector>
 
 void Recorder::setSoundDevice(char *str) {
     this->snd_device = str;
@@ -88,31 +89,22 @@ RecorderError Recorder::init(){
 }
 
 
-RecorderError Recorder::record() {
+void Recorder::record(std::vector<int16_t> &buf) {
 
     int ret = 0;
-    uint8_t buf[1024 * 4];
-    do {
+    //TODO: magi number, want 20ms of audio
+    if ( (ret = snd_pcm_readi(capture_handle, buf.data(), srate/5)) != static_cast<int>(srate/5)) {
+        
+        std::cerr << "read from audio interface failed " << snd_strerror(ret) << "\n";
 
-        if ( (ret = snd_pcm_readi(capture_handle, buf, 1024)) != 1024) {
-            
-            std::cerr << "read from audio interface failed " << snd_strerror(ret) << "\n";
-
-            if (ret == -32) {
-                if ( (ret = snd_pcm_prepare(capture_handle)) < 0) {
-                    std::cerr << "cannot prepare interface " << snd_strerror(ret) << "\n";
-                    return Error;
-                }
-            } else {
-                return Error;
+        if (ret == -32) {
+            if ( (ret = snd_pcm_prepare(capture_handle)) < 0) {
+                std::cerr << "cannot prepare interface " << snd_strerror(ret) << "\n";
+                //TODO: err
             }
+        } else {
+            std::cerr << "did not fill buffer\n";
+            //TODO: err
         }
-
-        for (size_t i = 0; i < 1024; i++) {
-            std::cout << static_cast<int>(buf[i]);
-        }
-        std::cout << std::endl;
-
-    } while(true);
-
+    }
 }
