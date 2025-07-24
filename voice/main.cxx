@@ -25,7 +25,7 @@ void recorder(std::vector<uint8_t> &buf) {
 }
 
 void sender(std::vector<uint8_t> &buf) {
-    udpSender sender("localhost", 8888);
+    udpSender sender("192.168.0.187", 8888);
 
     std::unique_lock<std::mutex> lock(mtx);
 
