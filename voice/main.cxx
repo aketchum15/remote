@@ -31,6 +31,10 @@ void sender(std::vector<uint8_t> &buf) {
 
     cv.wait(lock, [] { return data_ready; });
 
+    for (auto c : buf) {
+        printf("%02X ", c);
+    }
+    printf("\n");
     sender.send(buf);
 
     data_ready = false;
