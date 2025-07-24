@@ -8,7 +8,7 @@ class udpSender {
         ~udpSender();
 
         void init();
-        void send(const std::vector<int16_t> &);
+        void send(const std::vector<uint8_t> &);
 
     private:
         int sockfd;

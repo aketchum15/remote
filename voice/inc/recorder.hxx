@@ -1,4 +1,5 @@
 #include <alsa/asoundlib.h>
+#include <opus/opus.h>
 #include <cstddef>
 #include <vector>
 
@@ -15,7 +16,7 @@ class Recorder {
         ~Recorder();
 
         RecorderError init(void);
-        void record(std::vector<int16_t> &);
+        void record(std::vector<uint8_t> &);
 
         void setSoundDevice(char *);
 
@@ -37,4 +38,8 @@ class Recorder {
         unsigned char buffer[BUF_SIZE];
 
 
+        OpusEncoder *enc;
+
+        void alsa_init(void);
+        void opus_init(void);
 };

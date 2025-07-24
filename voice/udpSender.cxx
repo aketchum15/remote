@@ -21,7 +21,7 @@ udpSender::~udpSender() {
     close(sockfd);
 };
 
-void udpSender::send(const std::vector<int16_t> &buf) {
+void udpSender::send(const std::vector<uint8_t> &buf) {
 
     size_t sent = sendto(this->sockfd, buf.data(), buf.size(), 0, reinterpret_cast<sockaddr*>(&destAddr), sizeof(destAddr));
     if (sent != buf.size()) {

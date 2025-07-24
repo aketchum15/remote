@@ -10,7 +10,7 @@ bool data_ready = false;
 std::condition_variable cv;
 std::mutex mtx;
 
-void recorder(std::vector<int16_t> &buf) {
+void recorder(std::vector<uint8_t> &buf) {
     Recorder r;
 
     {
@@ -23,7 +23,7 @@ void recorder(std::vector<int16_t> &buf) {
     cv.notify_one();
 }
 
-void sender(std::vector<int16_t> &buf) {
+void sender(std::vector<uint8_t> &buf) {
     udpSender sender("localhost", 8888);
 
     std::unique_lock<std::mutex> lock(mtx);
@@ -36,7 +36,7 @@ void sender(std::vector<int16_t> &buf) {
 }
 
 int main(void) {
-    std::vector<int16_t> buf;
+    std::vector<uint8_t> buf;
 
     std::thread record_thread(recorder, std::ref(buf));
     std::thread send_thread(sender, std::ref(buf));
