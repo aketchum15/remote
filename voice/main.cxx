@@ -12,10 +12,11 @@ std::mutex mtx;
 
 void recorder(std::vector<uint8_t> &buf) {
     Recorder r;
+    r.setSoundDevice("hw:Device,0");
 
-    {
+    r.init();
+    while (true) {
         std::lock_guard<std::mutex> lock(mtx);
-        r.init();
         r.record(buf);
     }
 
