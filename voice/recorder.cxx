@@ -86,7 +86,7 @@ void Recorder::alsa_init() {
 void Recorder::opus_init() {
 
     int err = 0;
-    auto enc = opus_encoder_create(srate, 1, OPUS_APPLICATION_VOIP, &err);
+    enc = opus_encoder_create(srate, 1, OPUS_APPLICATION_VOIP, &err);
     if (err != 0) {
         //TODO:throw
     };
