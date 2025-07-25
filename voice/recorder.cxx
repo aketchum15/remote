@@ -127,6 +127,7 @@ void Recorder::record(std::vector<uint8_t> &buf) {
     ret = opus_encode(enc, raw_buf, 960, buf.data(), (sizeof(int16_t) * rawbuf_size) );
     if (ret < 0) {
         //TODO: throw 
+        std::cout << "encoding error\n";
     };
     
 

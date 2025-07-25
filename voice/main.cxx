@@ -15,7 +15,7 @@ void recorder(std::vector<uint8_t> &buf) {
     r.setSoundDevice("hw:Device,0");
 
     r.init();
-    {
+    for (;;){
         std::lock_guard<std::mutex> lock(mtx);
         r.record(buf);
     }
