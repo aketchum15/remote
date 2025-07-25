@@ -122,6 +122,12 @@ void Recorder::record(std::vector<uint8_t> &buf) {
             //TODO: err
         }
     }
+    
+    std::cout << "rawbuf: ";
+    for (auto i : raw_buf) {
+        printf("%02X ", i);
+    }
+    std::cout << "\n";
 
     //encode that bitch
     ret = opus_encode(enc, raw_buf, 960, buf.data(), (sizeof(int16_t) * rawbuf_size) );
