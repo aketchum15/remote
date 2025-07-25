@@ -33,17 +33,22 @@ void recorder(std::vector<uint8_t> &buf) {
 void sender(std::vector<uint8_t> &buf) {
     udpSender sender("192.168.0.187", 8888);
 
-    std::unique_lock<std::mutex> lock(mtx);
+    for (;;) {
+        {
+            std::unique_lock<std::mutex> lock(mtx);
 
-    cv.wait(lock, [] { return data_ready; });
+            cv.wait(lock, [] { return data_ready; });
 
-    for (auto c : buf) {
-        printf("%02X ", c);
+            std::cout << "Buf: ";
+            for (auto c : buf) {
+                printf("%02X ", c);
+            }
+            std::cout << "\n";
+            sender.send(buf);
+        }
+
+        data_ready = false;
     }
-    printf("\n");
-    sender.send(buf);
-
-    data_ready = false;
 }
 
 int main(void) {
