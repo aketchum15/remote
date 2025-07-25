@@ -1,10 +1,11 @@
-#include "inc/udpSender.hxx"
 #include <arpa/inet.h>
+#include <cstdint>
 #include <cstring>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <vector>
+
+#include "inc/udpSender.hxx"
 
 udpSender::udpSender(std::string ip, const uint16_t port) {
 
@@ -21,10 +22,10 @@ udpSender::~udpSender() {
     close(sockfd);
 };
 
-void udpSender::send(const std::vector<uint8_t> &buf) {
+void udpSender::send(std::array<uint8_t, MAX_PACKET_SIZE> &buf, size_t size) {
 
-    size_t sent = sendto(this->sockfd, buf.data(), buf.size(), 0, reinterpret_cast<sockaddr*>(&destAddr), sizeof(destAddr));
-    if (sent != buf.size()) {
+    size_t sent = sendto(this->sockfd, buf.data(), size, 0, reinterpret_cast<sockaddr*>(&destAddr), sizeof(destAddr));
+    if (sent != size) {
         //TODO: error
     }
 };

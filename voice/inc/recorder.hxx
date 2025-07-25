@@ -1,7 +1,10 @@
 #include <alsa/asoundlib.h>
+#include <array>
 #include <opus/opus.h>
 #include <cstddef>
-#include <vector>
+#include <string>
+
+#include "common.hxx"
 
 enum RecorderError {
     None,
@@ -11,18 +14,14 @@ enum RecorderError {
 class Recorder {
 
     public:
-        Recorder();
+        Recorder(std::string);
 
         ~Recorder();
 
         RecorderError init(void);
-        void record(std::vector<uint8_t> &);
-
-        void setSoundDevice(char *);
+        int32_t record(std::array<uint8_t, MAX_PACKET_SIZE> &);
 
         RecorderError closeSoundCard();
-
-        static const size_t BUF_SIZE = 1024;
 
 
     private:
@@ -30,12 +29,13 @@ class Recorder {
         snd_pcm_hw_params_t* hw_params;
         snd_pcm_info_t* s_info;
 
-        const char * snd_device;
+        std::string snd_device;
 
-        unsigned int srate = 48000;
-        unsigned const int nchan = 1;
+        uint32_t srate = 48000;
+        const uint32_t nchan = 1;
 
-        unsigned char buffer[BUF_SIZE];
+        // frame size for 20 ms of audio, srate is in MHz 
+        const uint32_t fsize  = srate / 1000 * 20;
 
 
         OpusEncoder *enc;

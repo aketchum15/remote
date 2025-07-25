@@ -1,59 +1,54 @@
-#include "inc/recorder.hxx"
-#include "inc/udpSender.hxx"
+#include <array>
 #include <condition_variable>
 #include <functional>
 #include <iostream>
 #include <mutex>
+#include <string>
 #include <thread>
-#include <vector>
 
-bool data_ready = false;
+#include "inc/common.hxx"
+#include "inc/recorder.hxx"
+#include "inc/udpSender.hxx"
+
+int32_t packet_size = 0;
 std::condition_variable cv;
 std::mutex mtx;
 
-void recorder(std::vector<uint8_t> &buf) {
-    Recorder r;
-    r.setSoundDevice("hw:Device,0");
+void recorder(std::array<uint8_t, MAX_PACKET_SIZE>& buf) {
+
+    Recorder r("hw:Device,0");
 
     r.init();
     for (;;) {
 
         {
             std::lock_guard<std::mutex> lock(mtx);
-            r.record(buf);
+            packet_size = r.record(buf);
         }
 
-        std::cout << "record thread done\n";
-        data_ready = true;
         cv.notify_one();
     }
 
 }
 
-void sender(std::vector<uint8_t> &buf) {
+void sender(std::array<uint8_t, MAX_PACKET_SIZE>& buf) {
     udpSender sender("192.168.0.187", 8888);
 
     for (;;) {
         {
             std::unique_lock<std::mutex> lock(mtx);
 
-            cv.wait(lock, [] { return data_ready; });
+            cv.wait(lock, [] { return packet_size > 0; });
 
-            std::cout << "Buf: ";
-            for (auto c : buf) {
-                printf("%02X ", c);
-            }
-            std::cout << "\n";
-            sender.send(buf);
+            sender.send(buf, packet_size);
         }
 
-        data_ready = false;
+        packet_size = 0;
     }
 }
 
 int main(void) {
-    std::vector<uint8_t> buf;
-    buf.reserve(48000/5 * sizeof(int16_t));
+    std::array<uint8_t, MAX_PACKET_SIZE> buf = {0};
 
     std::thread record_thread(recorder, std::ref(buf));
     std::thread send_thread(sender, std::ref(buf));

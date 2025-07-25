@@ -1,6 +1,9 @@
 #include <arpa/inet.h>
+#include <array>
 #include <string>
-#include <vector>
+
+#include "common.hxx"
+
 class udpSender {
 
     public:
@@ -8,7 +11,7 @@ class udpSender {
         ~udpSender();
 
         void init();
-        void send(const std::vector<uint8_t> &);
+        void send(std::array<uint8_t, MAX_PACKET_SIZE> &, size_t);
 
     private:
         int sockfd;

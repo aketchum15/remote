@@ -1,13 +1,12 @@
-#include "inc/recorder.hxx"
+#include <array>
 #include <iostream>
 #include <opus/opus_defines.h>
-#include <vector>
 
-void Recorder::setSoundDevice(char *str) {
-    this->snd_device = str;
+#include "inc/recorder.hxx"
+
+Recorder::Recorder(std::string dev) {
+    snd_device = dev;
 }
-
-Recorder::Recorder() {}
 
 Recorder::~Recorder() {}
 
@@ -21,7 +20,7 @@ void Recorder::alsa_init() {
 
     int err = 0;
 
-    if ((err = snd_pcm_open(&capture_handle, snd_device, SND_PCM_STREAM_CAPTURE, 0)) < 0)
+    if ((err = snd_pcm_open(&capture_handle, snd_device.c_str(), SND_PCM_STREAM_CAPTURE, 0)) < 0)
     {
         std::cerr << "cannot open audio device " << snd_device << "(" << snd_strerror(err) << ", " << err << ")" << "\n";
         //TODO: throw
@@ -101,14 +100,12 @@ RecorderError Recorder::init(){
     return RecorderError::None;
 }
 
-void Recorder::record(std::vector<uint8_t> &buf) {
+int32_t Recorder::record(std::array<uint8_t, MAX_PACKET_SIZE> &buf) {
 
     int ret = 0;
-    uint32_t rawbuf_size = srate/5;
-    int16_t raw_buf[rawbuf_size];
+    int16_t raw_buf[fsize];
 
-    //TODO: magi number, want 20ms of audio
-    if ( (ret = snd_pcm_readi(capture_handle, raw_buf, rawbuf_size)) != static_cast<int>(rawbuf_size)) {
+    if ( (ret = snd_pcm_readi(capture_handle, raw_buf, fsize)) != fsize) {
         
         std::cerr << "read from audio interface failed " << snd_strerror(ret) << "\n";
 
@@ -123,19 +120,12 @@ void Recorder::record(std::vector<uint8_t> &buf) {
         }
     }
     
-    std::cout << "rawbuf: ";
-    for (auto i : raw_buf) {
-        printf("%02X ", i);
-    }
-    std::cout << "\n";
-
     //encode that bitch
-    ret = opus_encode(enc, raw_buf, 960, buf.data(), (sizeof(int16_t) * rawbuf_size) );
+    ret = opus_encode(enc, raw_buf, fsize, buf.data(), MAX_PACKET_SIZE);
     if (ret < 0) {
         //TODO: throw 
         std::cout << "encoding error\n";
     };
-    
 
-
+    return ret;
 }
