@@ -16,17 +16,18 @@ void recorder(std::vector<uint8_t> &buf) {
     r.setSoundDevice("hw:Device,0");
 
     r.init();
-    for (;;){
+    for (;;) {
 
         {
             std::lock_guard<std::mutex> lock(mtx);
             r.record(buf);
         }
+
         std::cout << "record thread done\n";
+        data_ready = true;
+        cv.notify_one();
     }
 
-    data_ready = true;
-    cv.notify_one();
 }
 
 void sender(std::vector<uint8_t> &buf) {
