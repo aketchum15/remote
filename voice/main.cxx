@@ -2,6 +2,7 @@
 #include "inc/udpSender.hxx"
 #include <condition_variable>
 #include <functional>
+#include <iostream>
 #include <mutex>
 #include <thread>
 #include <vector>
@@ -16,8 +17,12 @@ void recorder(std::vector<uint8_t> &buf) {
 
     r.init();
     for (;;){
-        std::lock_guard<std::mutex> lock(mtx);
-        r.record(buf);
+
+        {
+            std::lock_guard<std::mutex> lock(mtx);
+            r.record(buf);
+        }
+        std::cout << "record thread done\n";
     }
 
     data_ready = true;
