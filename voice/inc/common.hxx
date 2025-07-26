@@ -1,1 +1,1 @@
-#define MAX_PACKET_SIZE 4000
+#define MAX_PACKET_SIZE 4096

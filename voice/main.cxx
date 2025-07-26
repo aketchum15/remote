@@ -41,6 +41,7 @@ void sender(std::array<uint8_t, MAX_PACKET_SIZE>& buf) {
             cv.wait(lock, [] { return packet_size > 0; });
 
             sender.send(buf, packet_size);
+            std::cout << "sent " << packet_size << " bytes";
         }
 
         packet_size = 0;
