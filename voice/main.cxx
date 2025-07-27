@@ -5,6 +5,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <wiringPi.h>
 
 #include "inc/common.hxx"
 #include "inc/recorder.hxx"
@@ -13,6 +14,38 @@
 int32_t packet_size = 0;
 std::condition_variable cv;
 std::mutex mtx;
+
+
+void gpio_listener(int32_t rec, int32_t notify) {
+    const int DEBOUNCE_MS = 50;
+    const int NO_TIMEOUT = -1;
+
+    wiringPiSetupGpio();
+    pinMode(rec, INPUT);
+
+    PullUpDnControl(rec, PUD_UP);
+    pinMode(notify, OUTPUT);
+    digitalWrite(notify, LOW);
+
+    bool toggle = false;
+    auto callback = [notify](stuct WPIWfiStatus status, void *user_data) {
+        if (status.edgeType == INT_RISING_EDGE) {
+            digitalWrite(notify, HIGH);
+            // send signal
+        } else {
+            digitalWrite(notify, low);
+            // send end signal
+        }
+    };
+    wiringPiISR2(rec, INT_EDGE_BOTH, &callback, DEBOUNCE_MS, NULL);
+
+    for (;;) {
+        //while not die
+    };
+
+    wiringPiISRStop(rec);
+    pinMode(notify, INPUT);
+};
 
 void recorder(std::array<uint8_t, MAX_PACKET_SIZE>& buf) {
 
@@ -53,7 +86,9 @@ int main(void) {
 
     std::thread record_thread(recorder, std::ref(buf));
     std::thread send_thread(sender, std::ref(buf));
+    std::thread gpio_thread(gpio_listener, 4, 2);
 
     record_thread.join();
     send_thread.join();
+
 }
