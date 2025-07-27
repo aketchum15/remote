@@ -23,12 +23,12 @@ void gpio_listener(int32_t rec, int32_t notify) {
     wiringPiSetupGpio();
     pinMode(rec, INPUT);
 
-    PullUpDnControl(rec, PUD_UP);
+    pullUpDnControl(rec, PUD_UP);
     pinMode(notify, OUTPUT);
     digitalWrite(notify, LOW);
 
     bool toggle = false;
-    auto callback = [notify](stuct WPIWfiStatus status, void *user_data) {
+    auto callback = [notify](struct WPIWfiStatus status, void *user_data) {
         if (status.edgeType == INT_RISING_EDGE) {
             digitalWrite(notify, HIGH);
             // send signal
