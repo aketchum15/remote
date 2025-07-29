@@ -3,7 +3,7 @@ CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++23 -g 
 
 # ALSA library
-LIBS = -lasound -lopus
+LIBS = -lasound -lopus -lgpiodcxx
 
 TARGET = remote
 
