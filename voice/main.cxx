@@ -101,7 +101,7 @@ int main(void) {
 
     //std::thread record_thread(recorder, std::ref(buf));
     //std::thread send_thread(sender, std::ref(buf));
-    std::thread gpio_thread("/dev/gpiochip0", gpio_listener, 4, 2);
+    std::thread gpio_thread(gpio_listener, "/dev/gpiochip0", 4, 2);
 
     //record_thread.join();
     //send_thread.join();
