@@ -18,7 +18,7 @@ std::mutex mtx;
 
 std::atomic<bool> is_held{false};
 
-void gpio_listener(std::string &chip_path, int32_t btn, int32_t led) {
+void gpio_listener(std::string chip_path, int32_t btn, int32_t led) {
     const auto DEBOUNCE_MS = std::chrono::milliseconds(10);
     auto chip = ::gpiod::chip(chip_path);
 
@@ -102,6 +102,7 @@ int main(void) {
     //std::thread record_thread(recorder, std::ref(buf));
     //std::thread send_thread(sender, std::ref(buf));
     std::thread gpio_thread(gpio_listener, "/dev/gpiochip0", 4, 2);
+    //gpio_listener("/dev/gpiochip0", 4, 2);
 
     //record_thread.join();
     //send_thread.join();
