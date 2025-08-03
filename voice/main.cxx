@@ -50,10 +50,12 @@ void gpio_listener(std::string chip_path, int32_t btn, int32_t led) {
         for (const auto &event : buffer) {
             switch (event.type()) {
                 case ::gpiod::edge_event::event_type::RISING_EDGE:
+                    std::cout << "rising edge\n";
                     led_request.set_value(led, ::gpiod::line::value::ACTIVE);
                     //signal start
                 break;
                 case ::gpiod::edge_event::event_type::FALLING_EDGE:
+                    std::cout << "falling edge\n";
                     led_request.set_value(led, ::gpiod::line::value::INACTIVE);
                     //signal stop
                 break;
