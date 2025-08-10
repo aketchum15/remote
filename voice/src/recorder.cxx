@@ -1,8 +1,9 @@
 #include <array>
 #include <iostream>
 #include <opus/opus_defines.h>
+#include <ranges>
 
-#include "inc/recorder.hxx"
+#include "recorder.hxx"
 
 Recorder::Recorder(std::string dev) {
     snd_device = dev;
@@ -71,20 +72,20 @@ void Recorder::opus_init() {
 };
 
 
-RecorderError Recorder::init(){
+void Recorder::init(){
      
     alsa_init();
     opus_init();
-
-    return RecorderError::None;
+    //TODO: errors
 }
 
-int32_t Recorder::record(std::array<uint8_t, MAX_PACKET_SIZE> &buf) {
+int32_t Recorder::record() {
 
     int ret = 0;
     int16_t raw_buf[fsize];
+    std::array<uint8_t, MAX_PACKET_SIZE> encoded_buf;
 
-    if ( (ret = snd_pcm_readi(capture_handle, raw_buf, fsize)) != fsize) {
+    if ( (ret = snd_pcm_readi(capture_handle, raw_buf, fsize)) != static_cast<int>(fsize)) {
         
         std::cerr << "read from audio interface failed " << snd_strerror(ret) << "\n";
 
@@ -100,11 +101,13 @@ int32_t Recorder::record(std::array<uint8_t, MAX_PACKET_SIZE> &buf) {
     }
     
     //encode that bitch
-    ret = opus_encode(enc, raw_buf, fsize, buf.data(), MAX_PACKET_SIZE);
+    ret = opus_encode(enc, raw_buf, fsize, encoded_buf.data(), MAX_PACKET_SIZE);
+
     if (ret < 0) {
         //TODO: throw 
         std::cout << "encoding error\n";
     };
+
 
     return ret;
 }

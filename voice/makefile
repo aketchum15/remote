@@ -2,16 +2,21 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++23 -g 
 
-# ALSA library
-LIBS = -lasound -lopus -lgpiodcxx
 
-TARGET = remote
+# Define dirs 
+SRC_DIR   = src
+INC_DIR   = inc 
+BUILD_DIR = build
+
+# libraries and include
+LIBS = -lasound -lopus -lgpiodcxx
+INC = -I$(INC_DIR)
 
 # Source and target
-SRCS = main.cxx recorder.cxx udpSender.cxx
+SRCS := $(wildcard src/*)
+OBJS := $(patsubst $(SRC_DIR)/%.cxx, $(BUILD_DIR)/%.o, $(SRCS))
 
-OBJS := $(SRCS:.cxx=.o)
-
+TARGET = $(BUILD_DIR)/remote
 
 # Default target
 all: $(TARGET)
@@ -19,8 +24,9 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
-%.o: %.cxx
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cxx
+	@mkdir -p $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INC)
 
 # Clean up build artifacts
 clean:

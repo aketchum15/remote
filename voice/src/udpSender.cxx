@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "inc/udpSender.hxx"
+#include "udpSender.hxx"
 
 udpSender::udpSender(std::string ip, const uint16_t port) {
 
@@ -22,10 +22,19 @@ udpSender::~udpSender() {
     close(sockfd);
 };
 
-void udpSender::send(std::array<uint8_t, MAX_PACKET_SIZE> &buf, size_t size) {
+void udpSender::send() {
+
+    return;
+    
+    /*
+    std::array<uint8_t, MAX_PACKET_SIZE> send_buf;
+    for (int i = 0; i < MAX_PACKET_SIZE; i++) {
+        send_buf[i] = q.pop();
+    };
 
     size_t sent = sendto(this->sockfd, buf.data(), size, 0, reinterpret_cast<sockaddr*>(&destAddr), sizeof(destAddr));
     if (sent != size) {
         //TODO: error
     }
+    */
 };

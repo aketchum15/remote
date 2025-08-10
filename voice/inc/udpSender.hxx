@@ -1,8 +1,10 @@
+#pragma once
+
 #include <arpa/inet.h>
-#include <array>
 #include <string>
 
 #include "common.hxx"
+#include "threadSafeQueue.hxx"
 
 class udpSender {
 
@@ -11,10 +13,12 @@ class udpSender {
         ~udpSender();
 
         void init();
-        void send(std::array<uint8_t, MAX_PACKET_SIZE> &, size_t);
+        void send();
 
     private:
         int sockfd;
         struct sockaddr_in destAddr;
+
+        ThreadSafeQueue<uint8_t> q;
 
 };
