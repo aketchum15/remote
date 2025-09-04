@@ -27,7 +27,6 @@
 
                     src = ./.;
 
-
                     nativeBuildInputs = with pkgsHost; [
                         pkg-config
                         cmake
@@ -62,6 +61,7 @@
                   ];
 
                   shellHook = ''
+                    alias v=nvim
                     export CC=clang
                     export CXX=clang++
 
