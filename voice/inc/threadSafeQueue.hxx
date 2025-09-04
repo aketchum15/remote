@@ -6,7 +6,7 @@
 #include <ranges>
 
 template<typename T> 
-class ThreadSafeQueue : std::queue<T> {
+class ThreadSafeQueue: private std::queue<T> {
  
     // No need for constructor destructor because of RAII kinda cool
     public:
@@ -35,6 +35,15 @@ class ThreadSafeQueue : std::queue<T> {
             std::queue<T>::push_range(rg);
             cv.notify_one();
         }
+
+        template<std::ranges::range R>
+        void pop_range_into(R& out, size_t n) {
+            std::lock_guard<std::mutex> lock(mtx);
+
+            auto size = std::min(std::queue<T>::size(), n);
+
+
+        };
 
         bool empty() {
             std::lock_guard<std::mutex> lock(mtx);

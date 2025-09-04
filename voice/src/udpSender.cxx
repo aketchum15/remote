@@ -1,13 +1,14 @@
 #include <arpa/inet.h>
 #include <cstdint>
 #include <cstring>
+#include <iterator>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
 #include "udpSender.hxx"
 
-udpSender::udpSender(std::string ip, const uint16_t port) {
+udpSender::udpSender(std::string ip, const uint16_t port, ThreadSafeQueue &q): q{q} {
 
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
     memset(&destAddr, 0, sizeof(destAddr));
@@ -24,17 +25,19 @@ udpSender::~udpSender() {
 
 void udpSender::send() {
 
-    return;
-    
-    /*
-    std::array<uint8_t, MAX_PACKET_SIZE> send_buf;
-    for (int i = 0; i < MAX_PACKET_SIZE; i++) {
-        send_buf[i] = q.pop();
-    };
+    std::array<uint8_t, max_packet_size> send_buf;
+    auto size = q.pop_range_into(std::back_inserter(send_buf), max_packet_size);
 
-    size_t sent = sendto(this->sockfd, buf.data(), size, 0, reinterpret_cast<sockaddr*>(&destAddr), sizeof(destAddr));
-    if (sent != size) {
+    size_t sent = sendto(
+            this->sockfd, 
+            send_buf.data(), 
+            size, 
+            0, 
+            reinterpret_cast<sockaddr*>(&destAddr), 
+            sizeof(destAddr)
+    );
+
+    if (sent != max_packet_size) {
         //TODO: error
     }
-    */
 };

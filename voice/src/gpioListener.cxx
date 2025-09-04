@@ -41,23 +41,16 @@ void gpioListener::_run() {
         for (const auto &event : buffer) {
             switch (event.type()) {
                 case ::gpiod::edge_event::event_type::RISING_EDGE:
-                    //TODO: this is hardcoded active low
+                    active = true;
                     if (line_out.has_value()) 
                         request_out->set_value(line_out.value(), ::gpiod::line::value::INACTIVE);
-                    {
-                        std::lock_guard<std::mutex> lock(mtx);
-                        active = true;
-                    }
                     cv.notify_one();
                 break;
 
                 case ::gpiod::edge_event::event_type::FALLING_EDGE:
+                    active = false;
                     if (line_out.has_value())
                         request_out->set_value(line_out.value(), ::gpiod::line::value::ACTIVE);
-                    {
-                        std::lock_guard<std::mutex> lock(mtx);
-                        active = false;
-                    }
                     cv.notify_one();
                 break;
             }

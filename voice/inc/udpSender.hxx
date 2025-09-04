@@ -3,13 +3,12 @@
 #include <arpa/inet.h>
 #include <string>
 
-#include "common.hxx"
-#include "threadSafeQueue.hxx"
+#include "tsq.hxx"
 
 class udpSender {
 
     public:
-        udpSender(std::string, const uint16_t);
+        udpSender(std::string, const uint16_t, ThreadSafeQueue &);
         ~udpSender();
 
         void init();
@@ -19,6 +18,7 @@ class udpSender {
         int sockfd;
         struct sockaddr_in destAddr;
 
-        ThreadSafeQueue<uint8_t> q;
+        ThreadSafeQueue &q;
 
+        static constexpr size_t max_packet_size = 4096;
 };

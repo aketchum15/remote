@@ -10,16 +10,19 @@ class gpioListener {
         gpioListener(gpiod::line::offset, std::optional<gpiod::line::offset> = std::nullopt);
         ~gpioListener(void) {};
         void start(void);
-    private:
 
+        std::atomic<bool> &getActive() { return active; };
+        std::condition_variable &getCV() { return cv; };
+
+    private:
         void _run();
         
         gpiod::line::offset line_in;
         std::optional<gpiod::line::offset> line_out;
-        std::condition_variable cv;
-        std::mutex mtx;
-        const std::chrono::milliseconds debounce = std::chrono::milliseconds(300);
         std::unique_ptr<gpiod::line_request> request_in;
         std::optional<gpiod::line_request> request_out;
-        bool active;
+        std::condition_variable cv;
+        std::atomic<bool> active;
+
+        static constexpr std::chrono::milliseconds debounce = std::chrono::milliseconds(300);
 };

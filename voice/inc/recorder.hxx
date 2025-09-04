@@ -1,13 +1,10 @@
 #pragma once
 
 #include <alsa/asoundlib.h>
-#include <array>
 #include <opus/opus.h>
 #include <string>
 
-#include "common.hxx"
-#include "threadSafeQueue.hxx"
-#include "packet.hxx"
+#include "tsq.hxx"
 
 enum RecorderError {
     None,
@@ -17,14 +14,16 @@ enum RecorderError {
 class Recorder {
 
     public:
-        Recorder(std::string);
+        Recorder(std::string, ThreadSafeQueue &);
 
         ~Recorder();
 
         void init(void);
         int32_t record();
 
-        RecorderError closeSoundCard();
+        void closeSoundCard();
+
+        void close();
 
 
     private:
@@ -34,15 +33,15 @@ class Recorder {
 
         std::string snd_device;
 
-        uint32_t srate = 48000;
-        const uint32_t nchan = 1;
+        static constexpr uint32_t srate = 48000;
+        static constexpr uint32_t nchan = 1;
 
         // frame size for 20 ms of audio, srate is in MHz 
-        uint32_t fsize  = srate / 1000 * 20;
+        static constexpr uint32_t fsize = srate / 1000 * 20;
 
         OpusEncoder *enc;
 
-        ThreadSafeQueue<Packet<uint8_t>> q;
+        ThreadSafeQueue &q;
 
         void alsa_init(void);
         void opus_init(void);
