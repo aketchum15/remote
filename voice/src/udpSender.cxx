@@ -26,7 +26,7 @@ udpSender::~udpSender() {
 void udpSender::send() {
 
     std::array<uint8_t, max_packet_size> send_buf;
-    auto size = q.pop_range_into(std::back_inserter(send_buf), max_packet_size);
+    auto size = q.pop_range_into(send_buf.begin(), max_packet_size);
 
     size_t sent = sendto(
             this->sockfd, 

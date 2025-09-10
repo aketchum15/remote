@@ -23,7 +23,8 @@ class ThreadSafeQueue {
         void push_range(R &&rg){
             {
                 std::lock_guard<std::mutex> lock(mtx);
-                q.push_range(rg);
+                for( auto i : rg) 
+                    q.push(i);
                 closed = false;
             }
             cv.notify_one();
@@ -49,14 +50,14 @@ class ThreadSafeQueue {
             return out;
         }
 
-        template<typename C>
-        size_t pop_range_into(std::back_insert_iterator<C> &&it, size_t n) {
+        template<typename It>
+        size_t pop_range_into(It &&it, size_t n) {
             std::unique_lock<std::mutex> lock(mtx);
             cv.wait(lock, [&] {return !q.empty() || closed;});
 
             auto min = std::min(q.size(), n);
             for(size_t i = 0; i < min; i++) {
-                it = q.front();
+                *it++ = q.front();
                 q.pop();
             }
             return min;

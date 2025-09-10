@@ -19,24 +19,7 @@
                         config = targetSystem;
                     };
                 };
-            in {
-                nixosConfigurations = {
-                    zero2w = nixpkgs.lib.nixosSystem {
-                        modules = [
-                            "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
-                            ./nixos-pi-zero-2/zero2w.nix
-                            {
-                                environment.systemPackages = with pkgsCross; [
-                                    voice
-                                    libopus
-                                    libgpiod 
-                                    alsa-lib
-                                ];
-                            }
-                        ];
-                    };
-                };
-                packages.voice = pkgsCross.stdenv.mkDerivation {
+                voice = pkgsCross.stdenv.mkDerivation {
                     pname = "voice";
                     version = "0.1.0";
 
@@ -61,6 +44,27 @@
                     ];
 
                 };
+            in {
+                nixosConfigurations = {
+                    zero2w = nixpkgs.lib.nixosSystem {
+                        system = targetSystem;
+                        modules = [
+                            "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
+                            ./nixos-pi-zero-2/zero2w.nix
+                            {
+                                environment.systemPackages = with pkgsCross; [
+                                    voice
+                                    libopus
+                                    libgpiod 
+                                    alsa-lib
+                                ];
+                                nixpkgs.buildPlatform = hostSystem;
+                                nixpkgs.hostPlatform = targetSystem;
+                            }
+                        ];
+                    };
+                };
+                packages.voice = voice;
 
                 devShells.voice = pkgsHost.mkShell {
                   packages = with pkgsHost; [

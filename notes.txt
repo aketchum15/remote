@@ -1,4 +1,0 @@
-command:
-$ arecord -f cd -t wav -D hw:Device,0 test.wav -c 1
-
-

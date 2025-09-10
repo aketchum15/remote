@@ -3,11 +3,10 @@ project(voice CXX)
 
 # Set the C++ standard and flags
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Add custom warning flags (equivalent to -Wall -Wextra -g)
+# Add custom warning flags
 add_compile_options(-Wall -Wextra -g)
 
 # Include directories
@@ -26,4 +25,4 @@ target_link_libraries(voice
     gpiodcxx
 )
 
-install(TARGETS voice RUNTIME DESTINATION bin )
+install(TARGETS voice RUNTIME DESTINATION bin)
