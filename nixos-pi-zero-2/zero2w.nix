@@ -96,11 +96,7 @@ in
       enable = true;
       interfaces = [ "wlan0" ];
       # ! Change the following to connect to your own network
-      networks = {
-        secrets.wifi.ssid = {
-          psk = secrets.wifi.psk;
-        };
-      };
+      networks = secrets.networks;
     };
   };
 
