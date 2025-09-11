@@ -4,7 +4,7 @@
 
 gpioListener::gpioListener(gpiod::line::offset line_in, std::optional<gpiod::line::offset> line_out): 
     line_in(line_in), line_out(line_out) {
-    auto chip = gpiod::chip("dev/gpiochip0");
+    auto chip = gpiod::chip("/dev/gpiochip0");
     request_in = std::make_unique<gpiod::line_request>(chip.prepare_request()
         .set_consumer("IN consumer")
         .add_line_settings(
